@@ -4,15 +4,14 @@ using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Configure services
 // Конфигурация сервисов
 // Добавление DbContext с использованием InMemoryDatabase для хранения данных оборудования и параметров в памяти
 builder.Services.AddDbContext<AppDbContext>(options => options.UseInMemoryDatabase("EquipmentDB"));
 
-// Добавление Endpoints API Explorer для генерации Swagger документации
+// Добавление Endpoints API  для генерации Swagger 
 builder.Services.AddEndpointsApiExplorer();
 
-// Добавление Swagger для документирования API и генерации UI для тестирования
+// Добавление Swagger 
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "EquipmentAPI", Version = "v1" });
@@ -20,7 +19,6 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
-// Swagger configuration
 // Конфигурация Swagger для окружения разработки (Development)
 // Включение Swagger и SwaggerUI только при запуске в режиме разработки
 if (app.Environment.IsDevelopment())
@@ -29,9 +27,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "EquipmentAPI v1"));
 }
 
-// Equipment CRUD operations
 // CRUD операции для управления сущностью Equipment (Оборудование)
-
 // Получение списка всех записей Equipment с включением связанных Parameters
 app.MapGet("/equipment", async (AppDbContext db) =>
     await db.Equipments.Include(e => e.Parameters).ToListAsync());
@@ -75,9 +71,8 @@ app.MapDelete("/equipment/{id}", async (int id, AppDbContext db) =>
     return Results.NoContent();
 });
 
-// Parameter CRUD operations
-// CRUD операции для управления сущностью Parameter (Параметры)
 
+// CRUD операции для управления сущностью Parameter (Параметры)
 // Получение списка всех параметров
 app.MapGet("/parameter", async (AppDbContext db) => await db.Parameters.ToListAsync());
 
